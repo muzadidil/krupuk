@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buku Kerupuk — Master, Produksi, Penjualan & Pembukuan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f6f1e4; --paper-line:#e0d6bd; --ink:#2b2016; --ink-soft:#6b5c47;
+    --udang:#c65a2e; --udang-dark:#9c4522; --card:#fffdf8;
+    --good:#3f6b4a; --bad:#b23a3a; --good-bg:#e8f0e9; --bad-bg:#f6e6e4;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);background-image:repeating-linear-gradient(var(--paper-line) 0 1px, transparent 1px 32px);
+    color:var(--ink);font-family:'Inter',sans-serif;padding-bottom:80px;}
+  header{padding:32px 20px 0;max-width:980px;margin:0 auto;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--udang-dark);margin:0 0 6px;}
+  h1{font-family:'Fraunces',serif;font-weight:700;font-size:clamp(26px,4.5vw,38px);margin:0 0 6px;line-height:1.05;}
+  .sub{color:var(--ink-soft);font-size:14px;max-width:560px;line-height:1.5;margin:0 0 20px;}
+  h2{font-family:'Fraunces',serif;font-size:21px;margin:0 0 4px;}
+  h3{font-family:'Fraunces',serif;font-size:17px;margin:0 0 10px;}
+
+  nav.tabs{max-width:980px;margin:0 auto;padding:0 20px;display:flex;gap:2px;border-bottom:2px solid var(--ink);}
+  nav.tabs button{
+    font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:.03em;text-transform:uppercase;
+    background:none;border:none;padding:11px 16px;cursor:pointer;color:var(--ink-soft);
+    border-bottom:3px solid transparent;margin-bottom:-2px;
+  }
+  nav.tabs button.active{color:var(--ink);border-bottom-color:var(--udang);font-weight:600;}
+
+  main{max-width:980px;margin:0 auto;padding:26px 20px;}
+  .tabpanel{display:none;}
+  .tabpanel.active{display:block;}
+
+  .card{background:var(--card);border:1.5px solid var(--ink);border-radius:2px;padding:20px 20px 22px;position:relative;margin-bottom:20px;}
+  .card::before{content:attr(data-tag);position:absolute;top:-11px;left:16px;background:var(--ink);color:var(--paper);
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;padding:3px 8px;text-transform:uppercase;}
+
+  label{display:block;font-size:12px;color:var(--ink-soft);margin-bottom:4px;font-family:'IBM Plex Mono',monospace;}
+  .field{margin-bottom:13px;}
+  input[type=number], input[type=text], input[type=date], select{
+    width:100%;padding:9px 10px;border:1.3px solid #cabb96;background:#fffef9;border-radius:3px;
+    font-family:'IBM Plex Mono',monospace;font-size:14.5px;color:var(--ink);
+  }
+  input:focus, select:focus{outline:2px solid var(--udang);outline-offset:1px;}
+  .row{display:flex;gap:10px;flex-wrap:wrap;}
+  .row .field{flex:1;min-width:150px;}
+
+  .recipe-item{display:grid;grid-template-columns:1.3fr 1fr 1fr 28px;gap:8px;align-items:center;margin-bottom:7px;}
+  .recipe-item input{padding:7px 8px;font-size:13px;}
+  .del{background:none;border:none;color:var(--bad);font-size:18px;cursor:pointer;width:28px;}
+  .add-btn{font-family:'IBM Plex Mono',monospace;font-size:12px;background:none;border:1.3px dashed var(--ink-soft);
+    color:var(--ink-soft);padding:6px 12px;cursor:pointer;border-radius:3px;margin-top:2px;}
+  .add-btn:hover{border-color:var(--udang);color:var(--udang-dark);}
+
+  button.primary{background:var(--udang);color:#fff;border:none;padding:11px 18px;font-family:'IBM Plex Mono',monospace;
+    font-size:13px;letter-spacing:.03em;border-radius:3px;cursor:pointer;font-weight:600;}
+  button.primary:hover{background:var(--udang-dark);}
+  button.primary:disabled{opacity:.5;cursor:not-allowed;}
+  button.ghost{background:none;border:1.3px solid var(--ink-soft);color:var(--ink-soft);padding:11px 16px;
+    font-family:'IBM Plex Mono',monospace;font-size:13px;border-radius:3px;cursor:pointer;}
+  .status{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-soft);margin-top:8px;min-height:16px;}
+
+  table{width:100%;border-collapse:collapse;font-size:13px;font-family:'IBM Plex Mono',monospace;}
+  th,td{text-align:left;padding:8px 7px;border-bottom:1px solid var(--paper-line);}
+  th{color:var(--ink-soft);font-weight:500;text-transform:uppercase;font-size:10.5px;letter-spacing:.04em;}
+  tr:hover td{background:#fbf6e9;}
+  td.num{text-align:right;font-variant-numeric:tabular-nums;}
+  .pos{color:var(--good);font-weight:600;} .neg{color:var(--bad);font-weight:600;}
+  .empty{color:var(--ink-soft);font-size:13px;padding:16px 0;}
+  .del-row{background:none;border:none;color:var(--bad);cursor:pointer;font-size:15px;}
+  .pill{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;padding:2px 7px;border-radius:10px;background:#efe6cf;color:var(--ink-soft);}
+  .pill.low{background:var(--bad-bg);color:var(--bad);}
+
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px;}
+  .kpi{background:var(--ink);color:var(--paper);border-radius:2px;padding:16px;}
+  .kpi .l{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#c9bda3;text-transform:uppercase;letter-spacing:.05em;}
+  .kpi .v{font-family:'Fraunces',serif;font-size:24px;color:#f0d199;margin-top:4px;}
+  .kpi .v.neg{color:#f08a7a;}
+
+  .master-card{border:1.3px solid var(--paper-line);border-radius:3px;padding:14px 16px;margin-bottom:12px;background:#fffef9;}
+  .master-card .mh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
+  .master-card .mh b{font-family:'Fraunces',serif;font-size:16px;}
+  .master-card .meta{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-soft);}
+  .master-card ul{margin:8px 0 0;padding-left:18px;font-size:12.5px;color:var(--ink-soft);}
+  .master-card .actions{margin-top:10px;display:flex;gap:8px;}
+  .master-card .actions button{font-size:11.5px;padding:5px 10px;}
+
+  .config-note{font-size:12px;color:var(--ink-soft);background:#fbf1dd;border:1px dashed #cabb96;
+    padding:10px 12px;border-radius:3px;margin-bottom:18px;line-height:1.5;}
+  .config-note code{background:#fff;padding:1px 4px;border-radius:2px;}
+</style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">Kerupuk · Master · Produksi · Penjualan · Pembukuan</p>
+  <h1>Buku Usaha Kerupuk</h1>
+  <p class="sub">Kelola resep tiap jenis kerupuk, catat setiap batch produksi, catat penjualan bertahap dari stok, dan pantau pembukuan otomatis.</p>
+</header>
+
+<nav class="tabs">
+  <button class="tab-btn active" data-tab="master">Master Resep</button>
+  <button class="tab-btn" data-tab="produksi">Produksi</button>
+  <button class="tab-btn" data-tab="penjualan">Penjualan</button>
+  <button class="tab-btn" data-tab="pembukuan">Pembukuan</button>
+</nav>
+
+<main>
+  <div id="configNote" class="config-note" style="display:none;">
+    Firestore belum terhubung. Isi <code>firebaseConfig</code> di bagian bawah file <code>index.html</code> dengan konfigurasi project Firebase kamu.
+  </div>
+
+  <!-- ============ TAB: MASTER RESEP ============ -->
+  <section class="tabpanel active" id="tab-master">
+    <div class="card" data-tag="Resep baru">
+      <div class="row">
+        <div class="field">
+          <label>Nama jenis kerupuk</label>
+          <input type="text" id="mName" placeholder="Contoh: Kerupuk Puli">
+        </div>
+        <div class="field">
+          <label>Output standar 1x produksi (kg)</label>
+          <input type="number" id="mOutput" placeholder="1200">
+        </div>
+        <div class="field">
+          <label>Harga jual default (Rp/kg)</label>
+          <input type="number" id="mHarga" placeholder="16000">
+        </div>
+      </div>
+      <label style="margin-bottom:8px;">Item resep (biaya untuk 1x produksi skala standar di atas)</label>
+      <div id="mRecipeList"></div>
+      <button class="add-btn" id="mAddItem" type="button">+ tambah item resep</button>
+      <div style="margin-top:14px;">
+        <button class="primary" id="mSaveBtn">Simpan master resep</button>
+        <button class="ghost" id="mCancelEdit" type="button" style="display:none;">Batal edit</button>
+      </div>
+      <p class="status" id="mStatus"></p>
+    </div>
+
+    <h2>Daftar master resep</h2>
+    <p class="sub" style="margin-bottom:14px;">Tiap master punya resep sendiri — jadi patokan saat mencatat produksi.</p>
+    <div id="masterListWrap"><p class="empty">Memuat…</p></div>
+  </section>
+
+  <!-- ============ TAB: PRODUKSI ============ -->
+  <section class="tabpanel" id="tab-produksi">
+    <div class="card" data-tag="Catat produksi">
+      <div class="row">
+        <div class="field">
+          <label>Master resep</label>
+          <select id="pMaster"><option value="">— pilih master —</option></select>
+        </div>
+        <div class="field">
+          <label>Tanggal produksi</label>
+          <input type="date" id="pTanggal">
+        </div>
+        <div class="field">
+          <label>Jumlah diproduksi (kg)</label>
+          <input type="number" id="pJumlah" placeholder="0">
+        </div>
+      </div>
+      <p class="status" id="pSkalaInfo" style="margin-bottom:10px;"></p>
+
+      <label style="margin-bottom:8px;">Rincian biaya (otomatis diskalakan dari resep, bisa disesuaikan)</label>
+      <div id="pItemList"><p class="empty">Pilih master resep dan isi jumlah kg dulu.</p></div>
+
+      <div class="field" style="margin-top:12px;">
+        <label>Catatan (opsional)</label>
+        <input type="text" id="pCatatan" placeholder="Contoh: kayu bakar basah, hasil kurang maksimal">
+      </div>
+
+      <div style="margin-top:6px;">
+        <button class="primary" id="pSaveBtn">Simpan produksi</button>
+      </div>
+      <p class="status" id="pStatus"></p>
+    </div>
+
+    <h2>Riwayat produksi</h2>
+    <p class="sub" style="margin-bottom:14px;">Stok sisa berkurang otomatis saat ada penjualan.</p>
+    <div id="produksiListWrap"><p class="empty">Memuat…</p></div>
+  </section>
+
+  <!-- ============ TAB: PENJUALAN ============ -->
+  <section class="tabpanel" id="tab-penjualan">
+    <div class="card" data-tag="Catat penjualan">
+      <div class="row">
+        <div class="field" style="flex:2;min-width:220px;">
+          <label>Batch produksi (stok tersedia)</label>
+          <select id="sProduksi"><option value="">— pilih batch —</option></select>
+        </div>
+        <div class="field">
+          <label>Tanggal jual</label>
+          <input type="date" id="sTanggal">
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>Jumlah terjual (kg)</label>
+          <input type="number" id="sJumlah" placeholder="0">
+        </div>
+        <div class="field">
+          <label>Harga jual (Rp/kg)</label>
+          <input type="number" id="sHarga" placeholder="0">
+        </div>
+        <div class="field">
+          <label>Pembeli (opsional)</label>
+          <input type="text" id="sPembeli" placeholder="Tengkulak / nama toko">
+        </div>
+      </div>
+      <p class="status" id="sTotalInfo" style="margin-bottom:6px;"></p>
+      <button class="primary" id="sSaveBtn">Simpan penjualan</button>
+      <p class="status" id="sStatus"></p>
+    </div>
+
+    <h2>Riwayat penjualan</h2>
+    <div id="penjualanListWrap"><p class="empty">Memuat…</p></div>
+  </section>
+
+  <!-- ============ TAB: PEMBUKUAN ============ -->
+  <section class="tabpanel" id="tab-pembukuan">
+    <div class="kpis" id="kpiWrap"></div>
+    <h2>Buku besar</h2>
+    <p class="sub" style="margin-bottom:14px;">Gabungan biaya produksi (pengeluaran) dan penjualan (pemasukan), urut tanggal, dengan saldo berjalan.</p>
+    <div id="ledgerWrap"><p class="empty">Memuat…</p></div>
+  </section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+/* =========================================================
+   KONFIGURASI FIREBASE — GANTI DENGAN MILIK KAMU
+   Firebase Console → Project settings → General → Your apps
+   ========================================================= */
+const firebaseConfig = {
+  apiKey: "GANTI_DENGAN_API_KEY",
+  authDomain: "GANTI.firebaseapp.com",
+  projectId: "GANTI_PROJECT_ID",
+  storageBucket: "GANTI.appspot.com",
+  messagingSenderId: "GANTI",
+  appId: "GANTI"
+};
+
+let db = null, firestoreReady = false;
+try {
+  if (!firebaseConfig.apiKey.includes("GANTI")) {
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
+    firestoreReady = true;
+  }
+} catch (e) { console.error(e); }
+if (!firestoreReady) document.getElementById('configNote').style.display = 'block';
+
+const rupiah = (n) => "Rp " + Math.round(n || 0).toLocaleString('id-ID');
+const kg = (n) => (n || 0).toLocaleString('id-ID');
+const todayStr = () => new Date().toISOString().slice(0,10);
+const fmtDate = (s) => { if(!s) return '-'; const d=new Date(s+'T00:00:00'); return d.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}); };
+
+/* =========================================================
+   TABS
+   ========================================================= */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tabpanel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* =========================================================
+   LOCAL CACHE (populated by Firestore listeners)
+   ========================================================= */
+let mastersCache = [];
+let produksiCache = [];
+let penjualanCache = [];
+
+/* =========================================================
+   MASTER RESEP
+   ========================================================= */
+let mRecipeItems = [{ name: "", unit: "", cost: 0 }];
+let editingMasterId = null;
+
+function renderRecipeEditor(){
+  const wrap = document.getElementById('mRecipeList');
+  wrap.innerHTML = "";
+  mRecipeItems.forEach((it, i) => {
+    const row = document.createElement('div');
+    row.className = 'recipe-item';
+    row.innerHTML = `
+      <input type="text" data-i="${i}" data-f="name" value="${(it.name||'').replace(/"/g,'&quot;')}" placeholder="Nama bahan">
+      <input type="text" data-i="${i}" data-f="unit" value="${(it.unit||'').replace(/"/g,'&quot;')}" placeholder="Qty/satuan (mis. 48 sak)">
+      <input type="number" data-i="${i}" data-f="cost" value="${it.cost||0}" placeholder="Biaya (Rp)">
+      <button class="del" data-i="${i}">×</button>`;
+    wrap.appendChild(row);
+  });
+  wrap.querySelectorAll('input').forEach(inp => inp.addEventListener('input', e => {
+    const i = +e.target.dataset.i, f = e.target.dataset.f;
+    mRecipeItems[i][f] = f === 'cost' ? (+e.target.value||0) : e.target.value;
+  }));
+  wrap.querySelectorAll('.del').forEach(b => b.addEventListener('click', e => {
+    mRecipeItems.splice(+e.target.dataset.i, 1);
+    renderRecipeEditor();
+  }));
+}
+document.getElementById('mAddItem').addEventListener('click', () => {
+  mRecipeItems.push({ name:"", unit:"", cost:0 });
+  renderRecipeEditor();
+});
+renderRecipeEditor();
+
+document.getElementById('mSaveBtn').addEventListener('click', async () => {
+  const name = document.getElementById('mName').value.trim();
+  const output = +document.getElementById('mOutput').value || 0;
+  const harga = +document.getElementById('mHarga').value || 0;
+  const items = mRecipeItems.filter(it => it.name.trim());
+  const statusEl = document.getElementById('mStatus');
+
+  if (!name || !output || !items.length) {
+    statusEl.textContent = "Isi nama, output standar (kg), dan minimal 1 item resep.";
+    statusEl.style.color = "var(--bad)"; return;
+  }
+  if (!firestoreReady) {
+    statusEl.textContent = "Belum tersambung ke Firestore.";
+    statusEl.style.color = "var(--bad)"; return;
+  }
+  const totalBiayaStandar = items.reduce((s,it) => s + (+it.cost||0), 0);
+  const payload = { name, outputStandarKg: output, hargaJualDefault: harga, recipeItems: items, totalBiayaStandar };
+
+  try {
+    if (editingMasterId) {
+      await db.collection('masters').doc(editingMasterId).update(payload);
+      statusEl.textContent = "Master diperbarui.";
+    } else {
+      payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+      await db.collection('masters').add(payload);
+      statusEl.textContent = "Master resep tersimpan.";
+    }
+    statusEl.style.color = "var(--good)";
+    resetMasterForm();
+  } catch (e) {
+    statusEl.textContent = "Gagal: " + e.message;
+    statusEl.style.color = "var(--bad)";
+  }
+});
+
+document.getElementById('mCancelEdit').addEventListener('click', resetMasterForm);
+
+function resetMasterForm(){
+  editingMasterId = null;
+  document.getElementById('mName').value = "";
+  document.getElementById('mOutput').value = "";
+  document.getElementById('mHarga').value = "";
+  mRecipeItems = [{ name:"", unit:"", cost:0 }];
+  renderRecipeEditor();
+  document.getElementById('mCancelEdit').style.display = 'none';
+}
+
+function editMaster(m){
+  editingMasterId = m.id;
+  document.getElementById('mName').value = m.name;
+  document.getElementById('mOutput').value = m.outputStandarKg;
+  document.getElementById('mHarga').value = m.hargaJualDefault;
+  mRecipeItems = JSON.parse(JSON.stringify(m.recipeItems));
+  renderRecipeEditor();
+  document.getElementById('mCancelEdit').style.display = 'inline-block';
+  document.getElementById('tab-master').scrollIntoView({behavior:'smooth'});
+}
+
+async function deleteMaster(id){
+  if (!confirm('Hapus master resep ini? Data produksi yang sudah tercatat tidak akan terhapus.')) return;
+  try { await db.collection('masters').doc(id).delete(); }
+  catch(e){ alert('Gagal menghapus: ' + e.message); }
+}
+
+function renderMasterList(){
+  const wrap = document.getElementById('masterListWrap');
+  if (!mastersCache.length) { wrap.innerHTML = '<p class="empty">Belum ada master resep. Tambahkan di atas.</p>'; return; }
+  wrap.innerHTML = mastersCache.map(m => {
+    const biayaPerKg = m.outputStandarKg ? m.totalBiayaStandar / m.outputStandarKg : 0;
+    return `
+    <div class="master-card">
+      <div class="mh">
+        <b>${m.name}</b>
+        <span class="meta">${kg(m.outputStandarKg)} kg standar · ${rupiah(biayaPerKg)}/kg biaya · jual ${rupiah(m.hargaJualDefault)}/kg</span>
+      </div>
+      <ul>${m.recipeItems.map(it => `<li>${it.name}${it.unit ? ' — '+it.unit : ''}: ${rupiah(it.cost)}</li>`).join('')}</ul>
+      <div class="actions">
+        <button class="ghost" data-edit="${m.id}">Edit</button>
+        <button class="ghost" data-del="${m.id}" style="color:var(--bad);border-color:var(--bad);">Hapus</button>
+      </div>
+    </div>`;
+  }).join('');
+  wrap.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', () => {
+    editMaster(mastersCache.find(m => m.id === b.dataset.edit));
+  }));
+  wrap.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', () => deleteMaster(b.dataset.del)));
+}
+
+function populateMasterDropdown(){
+  const sel = document.getElementById('pMaster');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">— pilih master —</option>' +
+    mastersCache.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
+  if (cur) sel.value = cur;
+}
+
+/* =========================================================
+   PRODUKSI
+   ========================================================= */
+let pScaledItems = [];
+
+function computeProduksiPreview(){
+  const masterId = document.getElementById('pMaster').value;
+  const jumlah = +document.getElementById('pJumlah').value || 0;
+  const infoEl = document.getElementById('pSkalaInfo');
+  const listEl = document.getElementById('pItemList');
+  const master = mastersCache.find(m => m.id === masterId);
+
+  if (!master) {
+    infoEl.textContent = "";
+    listEl.innerHTML = '<p class="empty">Pilih master resep dan isi jumlah kg dulu.</p>';
+    pScaledItems = [];
+    return;
+  }
+  const skala = master.outputStandarKg ? jumlah / master.outputStandarKg : 0;
+  infoEl.textContent = jumlah ? `Skala: ${(skala*100).toFixed(0)}% dari resep standar (${kg(master.outputStandarKg)} kg)` : `Resep standar: ${kg(master.outputStandarKg)} kg`;
+  infoEl.style.color = "var(--ink-soft)";
+
+  if (!pScaledItems.length || pScaledItems._masterId !== masterId || pScaledItems._jumlah !== jumlah) {
+    pScaledItems = master.recipeItems.map(it => ({ name: it.name, unit: it.unit, cost: Math.round((it.cost||0) * skala) }));
+    pScaledItems._masterId = masterId;
+    pScaledItems._jumlah = jumlah;
+  }
+  renderProduksiItems();
+}
+
+function renderProduksiItems(){
+  const listEl = document.getElementById('pItemList');
+  if (!pScaledItems.length) { listEl.innerHTML = '<p class="empty">Pilih master resep dan isi jumlah kg dulu.</p>'; return; }
+  listEl.innerHTML = pScaledItems.map((it,i) => `
+    <div class="recipe-item">
+      <input type="text" value="${it.name.replace(/"/g,'&quot;')}" data-i="${i}" data-f="name">
+      <input type="text" value="${(it.unit||'').replace(/"/g,'&quot;')}" data-i="${i}" data-f="unit" placeholder="qty">
+      <input type="number" value="${it.cost}" data-i="${i}" data-f="cost">
+      <button class="del" data-i="${i}">×</button>
+    </div>`).join('');
+  listEl.querySelectorAll('input').forEach(inp => inp.addEventListener('input', e => {
+    const i = +e.target.dataset.i, f = e.target.dataset.f;
+    pScaledItems[i][f] = f === 'cost' ? (+e.target.value||0) : e.target.value;
+  }));
+  listEl.querySelectorAll('.del').forEach(b => b.addEventListener('click', e => {
+    pScaledItems.splice(+e.target.dataset.i, 1);
+    renderProduksiItems();
+  }));
+}
+
+document.getElementById('pMaster').addEventListener('change', computeProduksiPreview);
+document.getElementById('pJumlah').addEventListener('input', computeProduksiPreview);
+document.getElementById('pTanggal').value = todayStr();
+
+document.getElementById('pSaveBtn').addEventListener('click', async () => {
+  const statusEl = document.getElementById('pStatus');
+  const masterId = document.getElementById('pMaster').value;
+  const master = mastersCache.find(m => m.id === masterId);
+  const jumlah = +document.getElementById('pJumlah').value || 0;
+  const tanggal = document.getElementById('pTanggal').value || todayStr();
+  const catatan = document.getElementById('pCatatan').value.trim();
+
+  if (!master || !jumlah || !pScaledItems.length) {
+    statusEl.textContent = "Pilih master, isi jumlah kg, dan pastikan rincian biaya terisi.";
+    statusEl.style.color = "var(--bad)"; return;
+  }
+  if (!firestoreReady) { statusEl.textContent = "Belum tersambung ke Firestore."; statusEl.style.color = "var(--bad)"; return; }
+
+  const totalBiaya = pScaledItems.reduce((s,it) => s + (+it.cost||0), 0);
+  try {
+    await db.collection('produksi').add({
+      masterId, masterName: master.name, tanggal, jumlahKg: jumlah,
+      items: pScaledItems.map(({name,unit,cost}) => ({name,unit,cost})),
+      totalBiaya, stokTerjual: 0, catatan,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    statusEl.textContent = "Produksi tersimpan.";
+    statusEl.style.color = "var(--good)";
+    document.getElementById('pJumlah').value = "";
+    document.getElementById('pCatatan').value = "";
+    pScaledItems = [];
+    computeProduksiPreview();
+  } catch (e) {
+    statusEl.textContent = "Gagal: " + e.message;
+    statusEl.style.color = "var(--bad)";
+  }
+});
+
+async function deleteProduksi(id){
+  const p = produksiCache.find(x => x.id === id);
+  if (p && p.stokTerjual > 0) {
+    alert('Batch ini sudah punya penjualan tercatat. Hapus penjualan terkait dulu sebelum menghapus batch produksi.');
+    return;
+  }
+  if (!confirm('Hapus catatan produksi ini?')) return;
+  try { await db.collection('produksi').doc(id).delete(); }
+  catch(e){ alert('Gagal menghapus: ' + e.message); }
+}
+
+function renderProduksiList(){
+  const wrap = document.getElementById('produksiListWrap');
+  if (!produksiCache.length) { wrap.innerHTML = '<p class="empty">Belum ada catatan produksi.</p>'; return; }
+  let html = `<table><thead><tr>
+    <th>Tanggal</th><th>Master</th><th class="num">Jumlah (kg)</th><th class="num">Biaya</th>
+    <th class="num">Biaya/kg</th><th class="num">Stok sisa</th><th></th>
+  </tr></thead><tbody>`;
+  produksiCache.forEach(p => {
+    const sisa = p.jumlahKg - (p.stokTerjual||0);
+    const biayaPerKg = p.jumlahKg ? p.totalBiaya / p.jumlahKg : 0;
+    html += `<tr>
+      <td>${fmtDate(p.tanggal)}</td>
+      <td>${p.masterName}</td>
+      <td class="num">${kg(p.jumlahKg)}</td>
+      <td class="num">${rupiah(p.totalBiaya)}</td>
+      <td class="num">${rupiah(biayaPerKg)}</td>
+      <td class="num">${kg(sisa)} <span class="pill ${sisa<=0?'low':''}">${sisa<=0?'habis':'tersedia'}</span></td>
+      <td><button class="del-row" data-id="${p.id}">×</button></td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+  wrap.querySelectorAll('.del-row').forEach(b => b.addEventListener('click', () => deleteProduksi(b.dataset.id)));
+}
+
+function populateProduksiDropdown(){
+  const sel = document.getElementById('sProduksi');
+  const cur = sel.value;
+  const avail = produksiCache.filter(p => (p.jumlahKg - (p.stokTerjual||0)) > 0);
+  sel.innerHTML = '<option value="">— pilih batch —</option>' +
+    avail.map(p => `<option value="${p.id}">${p.masterName} · ${fmtDate(p.tanggal)} · sisa ${kg(p.jumlahKg-(p.stokTerjual||0))} kg</option>`).join('');
+  if (cur) sel.value = cur;
+  onProduksiPick();
+}
+
+/* =========================================================
+   PENJUALAN
+   ========================================================= */
+document.getElementById('sTanggal').value = todayStr();
+
+function onProduksiPick(){
+  const id = document.getElementById('sProduksi').value;
+  const p = produksiCache.find(x => x.id === id);
+  if (p) {
+    const master = mastersCache.find(m => m.id === p.masterId);
+    if (master && !document.getElementById('sHarga').value) {
+      document.getElementById('sHarga').value = master.hargaJualDefault || "";
+    }
+  }
+  updateSaleTotal();
+}
+document.getElementById('sProduksi').addEventListener('change', onProduksiPick);
+
+function updateSaleTotal(){
+  const jumlah = +document.getElementById('sJumlah').value || 0;
+  const harga = +document.getElementById('sHarga').value || 0;
+  const id = document.getElementById('sProduksi').value;
+  const p = produksiCache.find(x => x.id === id);
+  const infoEl = document.getElementById('sTotalInfo');
+  let msg = `Total: ${rupiah(jumlah*harga)}`;
+  if (p) {
+    const sisa = p.jumlahKg - (p.stokTerjual||0);
+    msg += ` · Stok tersedia: ${kg(sisa)} kg`;
+    infoEl.style.color = jumlah > sisa ? "var(--bad)" : "var(--ink-soft)";
+    if (jumlah > sisa) msg += " — melebihi stok!";
+  } else {
+    infoEl.style.color = "var(--ink-soft)";
+  }
+  infoEl.textContent = msg;
+}
+document.getElementById('sJumlah').addEventListener('input', updateSaleTotal);
+document.getElementById('sHarga').addEventListener('input', updateSaleTotal);
+
+document.getElementById('sSaveBtn').addEventListener('click', async () => {
+  const statusEl = document.getElementById('sStatus');
+  const produksiId = document.getElementById('sProduksi').value;
+  const jumlah = +document.getElementById('sJumlah').value || 0;
+  const harga = +document.getElementById('sHarga').value || 0;
+  const tanggal = document.getElementById('sTanggal').value || todayStr();
+  const pembeli = document.getElementById('sPembeli').value.trim();
+
+  if (!produksiId || !jumlah || !harga) {
+    statusEl.textContent = "Pilih batch, isi jumlah kg dan harga jual.";
+    statusEl.style.color = "var(--bad)"; return;
+  }
+  if (!firestoreReady) { statusEl.textContent = "Belum tersambung ke Firestore."; statusEl.style.color = "var(--bad)"; return; }
+
+  const pRef = db.collection('produksi').doc(produksiId);
+  try {
+    await db.runTransaction(async (tx) => {
+      const pDoc = await tx.get(pRef);
+      if (!pDoc.exists) throw new Error("Batch produksi tidak ditemukan.");
+      const pData = pDoc.data();
+      const sisa = pData.jumlahKg - (pData.stokTerjual||0);
+      if (jumlah > sisa) throw new Error(`Stok tidak cukup. Sisa stok hanya ${sisa} kg.`);
+      tx.update(pRef, { stokTerjual: (pData.stokTerjual||0) + jumlah });
+      const saleRef = db.collection('penjualan').doc();
+      tx.set(saleRef, {
+        produksiId, masterId: pData.masterId, masterName: pData.masterName,
+        tanggalProduksi: pData.tanggal, tanggal, jumlahKg: jumlah, hargaPerKg: harga,
+        totalRp: jumlah*harga, pembeli,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    });
+    statusEl.textContent = "Penjualan tersimpan.";
+    statusEl.style.color = "var(--good)";
+    document.getElementById('sJumlah').value = "";
+    document.getElementById('sPembeli').value = "";
+    updateSaleTotal();
+  } catch (e) {
+    statusEl.textContent = "Gagal: " + e.message;
+    statusEl.style.color = "var(--bad)";
+  }
+});
+
+async function deletePenjualan(id){
+  const s = penjualanCache.find(x => x.id === id);
+  if (!s) return;
+  if (!confirm('Hapus penjualan ini? Stok akan dikembalikan ke batch produksi terkait.')) return;
+  const pRef = db.collection('produksi').doc(s.produksiId);
+  const sRef = db.collection('penjualan').doc(id);
+  try {
+    await db.runTransaction(async (tx) => {
+      const pDoc = await tx.get(pRef);
+      if (pDoc.exists) {
+        const pData = pDoc.data();
+        tx.update(pRef, { stokTerjual: Math.max(0, (pData.stokTerjual||0) - s.jumlahKg) });
+      }
+      tx.delete(sRef);
+    });
+  } catch (e) { alert('Gagal menghapus: ' + e.message); }
+}
+
+function renderPenjualanList(){
+  const wrap = document.getElementById('penjualanListWrap');
+  if (!penjualanCache.length) { wrap.innerHTML = '<p class="empty">Belum ada penjualan.</p>'; return; }
+  let html = `<table><thead><tr>
+    <th>Tanggal</th><th>Master</th><th>Pembeli</th><th class="num">Kg</th><th class="num">Harga/kg</th><th class="num">Total</th><th></th>
+  </tr></thead><tbody>`;
+  penjualanCache.forEach(s => {
+    html += `<tr>
+      <td>${fmtDate(s.tanggal)}</td>
+      <td>${s.masterName}</td>
+      <td>${s.pembeli || '-'}</td>
+      <td class="num">${kg(s.jumlahKg)}</td>
+      <td class="num">${rupiah(s.hargaPerKg)}</td>
+      <td class="num">${rupiah(s.totalRp)}</td>
+      <td><button class="del-row" data-id="${s.id}">×</button></td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+  wrap.querySelectorAll('.del-row').forEach(b => b.addEventListener('click', () => deletePenjualan(b.dataset.id)));
+}
+
+/* =========================================================
+   PEMBUKUAN (buku besar)
+   ========================================================= */
+function renderPembukuan(){
+  const totalPendapatan = penjualanCache.reduce((s,x) => s + x.totalRp, 0);
+  const totalBiaya = produksiCache.reduce((s,x) => s + x.totalBiaya, 0);
+  const labaBersih = totalPendapatan - totalBiaya;
+  const totalStokSisa = produksiCache.reduce((s,x) => s + (x.jumlahKg - (x.stokTerjual||0)), 0);
+
+  document.getElementById('kpiWrap').innerHTML = `
+    <div class="kpi"><div class="l">Total pendapatan</div><div class="v">${rupiah(totalPendapatan)}</div></div>
+    <div class="kpi"><div class="l">Total biaya produksi</div><div class="v">${rupiah(totalBiaya)}</div></div>
+    <div class="kpi"><div class="l">Laba bersih</div><div class="v ${labaBersih<0?'neg':''}">${rupiah(labaBersih)}</div></div>
+    <div class="kpi"><div class="l">Stok belum terjual</div><div class="v">${kg(totalStokSisa)} kg</div></div>
+  `;
+
+  const entries = [
+    ...produksiCache.map(p => ({ tanggal: p.tanggal, ket: `Produksi — ${p.masterName}`, debit: p.totalBiaya, kredit: 0 })),
+    ...penjualanCache.map(s => ({ tanggal: s.tanggal, ket: `Penjualan — ${s.masterName}${s.pembeli ? ' ke '+s.pembeli : ''}`, debit: 0, kredit: s.totalRp })),
+  ].sort((a,b) => (a.tanggal || '').localeCompare(b.tanggal || ''));
+
+  const wrap = document.getElementById('ledgerWrap');
+  if (!entries.length) { wrap.innerHTML = '<p class="empty">Belum ada transaksi.</p>'; return; }
+
+  let saldo = 0;
+  let html = `<table><thead><tr>
+    <th>Tanggal</th><th>Keterangan</th><th class="num">Pengeluaran</th><th class="num">Pemasukan</th><th class="num">Saldo</th>
+  </tr></thead><tbody>`;
+  entries.forEach(e => {
+    saldo += e.kredit - e.debit;
+    html += `<tr>
+      <td>${fmtDate(e.tanggal)}</td>
+      <td>${e.ket}</td>
+      <td class="num">${e.debit ? rupiah(e.debit) : '-'}</td>
+      <td class="num">${e.kredit ? rupiah(e.kredit) : '-'}</td>
+      <td class="num ${saldo<0?'neg':'pos'}">${rupiah(saldo)}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+}
+
+/* =========================================================
+   FIRESTORE LISTENERS
+   ========================================================= */
+if (firestoreReady) {
+  db.collection('masters').orderBy('createdAt', 'desc').onSnapshot(snap => {
+    mastersCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderMasterList(); populateMasterDropdown(); computeProduksiPreview();
+  }, err => { document.getElementById('masterListWrap').innerHTML = `<p class="empty">Gagal memuat: ${err.message}</p>`; });
+
+  db.collection('produksi').orderBy('tanggal', 'desc').onSnapshot(snap => {
+    produksiCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderProduksiList(); populateProduksiDropdown(); renderPembukuan();
+  }, err => { document.getElementById('produksiListWrap').innerHTML = `<p class="empty">Gagal memuat: ${err.message}</p>`; });
+
+  db.collection('penjualan').orderBy('tanggal', 'desc').onSnapshot(snap => {
+    penjualanCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderPenjualanList(); renderPembukuan();
+  }, err => { document.getElementById('penjualanListWrap').innerHTML = `<p class="empty">Gagal memuat: ${err.message}</p>`; });
+} else {
+  document.getElementById('masterListWrap').innerHTML = '<p class="empty">Sambungkan Firestore untuk melihat data.</p>';
+  document.getElementById('produksiListWrap').innerHTML = '<p class="empty">Sambungkan Firestore untuk melihat data.</p>';
+  document.getElementById('penjualanListWrap').innerHTML = '<p class="empty">Sambungkan Firestore untuk melihat data.</p>';
+  document.getElementById('ledgerWrap').innerHTML = '<p class="empty">Sambungkan Firestore untuk melihat data.</p>';
+  renderPembukuan();
+}
+</script>
+</body>
+</html>
